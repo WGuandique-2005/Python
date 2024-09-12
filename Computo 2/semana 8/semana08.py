@@ -6,6 +6,7 @@ class myapp(QMainWindow):
         super().__init__()
         self.setWindowTitle("Semana 08")
         self.setGeometry(200, 300, 400, 400)
+        
         boton = QPushButton("salir")
         self.setCentralWidget(boton)
         boton.clicked.connect(exit)

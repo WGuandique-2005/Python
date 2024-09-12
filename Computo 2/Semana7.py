@@ -9,3 +9,12 @@
 #! Entornos virtuales
 # Un entorno virtual es un espacio aislado donde se pueden instalar paquetes
 # sin afectar a otros proyectos o entornos.
+
+"""
+pip freeze > requeriments.txt
+pip install -r requeriments.txt
+
+
+python -m venv tutorial-venv
+tutorial-venv\Scripts\activate.bat
+"""
