@@ -13,7 +13,6 @@ class ventana(QMainWindow):
         boton.clicked.connect(self.evento_click)
         
         self.label = QLabel()
-        
         self.inputxt1 = QLineEdit()
         self.inputxt2 = QLineEdit()
         
