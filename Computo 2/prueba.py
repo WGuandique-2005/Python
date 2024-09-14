@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLineEdit, QLabel, QTextEdit, QGridLayout, QInputDialog
+from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QPushButton, 
+                            QLineEdit, QLabel, QTextEdit, QGridLayout, QInputDialog)
 from PyQt5.QtCore import Qt
 
 class Producto:
@@ -24,8 +25,9 @@ class Tienda(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(300, 300, 400, 300)
+        self.setGeometry(300, 300, 500, 300)
         self.setWindowTitle('Tienda')
+        self.setContentsMargins(50,10,50,30)
 
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -33,21 +35,21 @@ class Tienda(QWidget):
         self.menu_label = QLabel("Menu:")
         layout.addWidget(self.menu_label)
 
-        self.ingresar_producto_button = QPushButton("Ingresar productos")
-        self.ingresar_producto_button.clicked.connect(self.ingresar_producto)
-        layout.addWidget(self.ingresar_producto_button)
+        self.ingresar_pro_btn = QPushButton("Ingresar productos")
+        self.ingresar_pro_btn.clicked.connect(self.ingresar_producto)
+        layout.addWidget(self.ingresar_pro_btn)
 
         self.mostrar_stock_button = QPushButton("Mostrar stock")
         self.mostrar_stock_button.clicked.connect(self.mostrar_stock)
         layout.addWidget(self.mostrar_stock_button)
 
-        self.comprar_button = QPushButton("Comprar")
-        self.comprar_button.clicked.connect(self.comprar)
-        layout.addWidget(self.comprar_button)
+        self.comprar_btn = QPushButton("Comprar")
+        self.comprar_btn.clicked.connect(self.comprar)
+        layout.addWidget(self.comprar_btn)
 
-        self.salir_button = QPushButton("Salir")
-        self.salir_button.clicked.connect(self.close)
-        layout.addWidget(self.salir_button)
+        self.salir_btn = QPushButton("Salir")
+        self.salir_btn.clicked.connect(self.close)
+        layout.addWidget(self.salir_btn)
 
         self.text_edit = QTextEdit()
         layout.addWidget(self.text_edit)
@@ -69,7 +71,7 @@ class Tienda(QWidget):
         else:
             for key, value in self.my_stock.items():
                 self.text_edit.append(f"Nombre: {value['nombre']}, Precio: {value['precio']}, Cantidad: {value['cantidad']}")
-                self.text_edit.append("--------------------------------------------")
+                self.text_edit.append("---------------------------------------------------------------------------------")
 
     def comprar(self):
         nombre, ok = QInputDialog.getText(self, "Comprar", "Ingrese el nombre del producto:")
