@@ -5,7 +5,7 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget,
                             QLineEdit, QTextEdit, QLabel, QPushButton,
-                            QFormLayout, QComboBox, QSpinBox, QRadioButton)
+                            QFormLayout)
 import mysql.connector
 
 class myApp(QMainWindow):
@@ -27,23 +27,17 @@ class myApp(QMainWindow):
         layout = QFormLayout()
         
         lbl1 = QLabel("Ingrese los datos del producto:\n")
-        
         lbl_name = QLabel("Ingrese el nombre:")
         self.txt_name = QLineEdit()
-        
         lbl_price = QLabel("Ingrese el precio: ")
         self.txt_price = QLineEdit()
-        
         lbl_quantity = QLabel("Ingrese la cantidad:")
         self.txt_quantity = QLineEdit()
-        
         self.btn_add = QPushButton("Agregar producto")
         self.btn_see = QPushButton("Ver productos")
         self.btn_add.clicked.connect(self.clicked_add)
         self.btn_see.clicked.connect(self.clicked_see)
-        
         self.view = QTextEdit()
-        
         
         layout.addRow(lbl1)
         layout.addRow(lbl_name, self.txt_name)
@@ -52,10 +46,9 @@ class myApp(QMainWindow):
         layout.addRow(self.btn_add, self.btn_see)
         layout.addRow(self.view)
         
-        
         center.setLayout(layout)
         self.setCentralWidget(center)
-        
+    
     def clicked_add(self):
         try:
             cursor = self.db.cursor()
@@ -73,7 +66,7 @@ class myApp(QMainWindow):
         cursor = self.db.cursor()
         cursor.execute("select * from producto")
         resultados = cursor.fetchall()
-
+        
         texto = "Productos:\n"
         texto += "---------\n"
         for fila in resultados:
@@ -82,7 +75,7 @@ class myApp(QMainWindow):
             texto += f"Precio: {fila[2]}\n"
             texto += f"Cantidad: {fila[3]}\n"
             texto += "---------\n"
-
+        
         self.view.setText(texto)
 
 app = QApplication(sys.argv)
