@@ -104,13 +104,15 @@ class myApp(QMainWindow):
         self.txt_quantity_update = QLineEdit()
         btn_yes = QPushButton("Actualizar")
         btn_yes.clicked.connect(self.exec_update)
+        btn_no = QPushButton("Volver")
+        btn_no.clicked.connect(lambda: self.question.reject())
 
         layout = QFormLayout()
         layout.addRow(self.lbl_id, self.txt_id)
         layout.addRow(self.lbl_name, self.txt_name_update)
         layout.addRow(self.lbl_price, self.txt_price_update)
         layout.addRow(self.lbl_quantity, self.txt_quantity_update)
-        layout.addRow(btn_yes)
+        layout.addRow(btn_yes, btn_no)
 
         self.question.setLayout(layout)
 
@@ -131,14 +133,85 @@ class myApp(QMainWindow):
             self.question.accept()
         except:
             self.view.setText("Error al actualizar producto")
-        
     
     def clicked_deleted(self):
-        pass
+        self.question = QDialog()
+        self.question.setWindowTitle("Eliminar producto")
+        
+        layout = QFormLayout()
+        self.lbl_id = QLabel("Ingrese el ID del producto:")
+        self.txt_id = QLineEdit()
+        
+        btn_yes = QPushButton("Eliminar")
+        btn_yes.clicked.connect(self.exec_delete)
+        btn_no = QPushButton("Volver")
+        btn_no.clicked.connect(lambda: self.question.reject())
+        
+        layout.addRow(self.lbl_id, self.txt_id)
+        layout.addRow(btn_yes, btn_no)
+        
+        self.question.setLayout(layout)
+
+        if self.question.exec_() == QDialog.Accepted:
+            pass  # No necesitamos hacer nada aquí
+
+    def exec_delete(self):
+        try:
+            cursor = self.db.cursor()
+            id = int(self.txt_id.text())
+            cursor.execute(f"delete from producto where id = {id}")
+            self.view.setText("Producto eliminado con éxito")
+            self.db.commit()
+        except:
+            self.view.setText("Error al eliminar producto")
+        finally:
+            self.question.accept()
     
     def clicked_search(self):
-        pass
-    
+        self.question = QDialog()
+        self.question.setWindowTitle("Buscar producto")
+        
+        layout = QFormLayout()
+        self.lbl_id = QLabel("Ingrese el ID del producto:")
+        self.txt_id = QLineEdit()
+        
+        btn_yes = QPushButton("Buscar")
+        btn_yes.clicked.connect(self.exec_search)
+        btn_no = QPushButton("Volver")
+        btn_no.clicked.connect(lambda: self.question.reject())
+        
+        layout.addRow(self.lbl_id, self.txt_id)
+        layout.addRow(btn_yes, btn_no)
+        
+        self.question.setLayout(layout)
+
+        if self.question.exec_() == QDialog.Accepted:
+            pass  # No necesitamos hacer nada aquí
+        
+    def exec_search(self):
+        try:
+            cursor = self.db.cursor()
+            id = int(self.txt_id.text())
+            cursor.execute(f"select * from producto where id = {id}")
+            resultados = cursor.fetchall()
+            
+            if resultados:
+                texto = "Producto encontrado:\n"
+                texto += "---------\n"
+                for fila in resultados:
+                    texto += f"_id: {fila[0]}\n"
+                    texto += f"Nombre: {fila[1]}\n"
+                    texto += f"Precio: {fila[2]}\n"
+                    texto += f"Cantidad: {fila[3]}\n"
+                    texto += "---------\n"
+                self.view.setText(texto)
+            else:
+                self.view.setText("Producto no encontrado")
+        except:
+            self.view.setText("Error al buscar producto")
+        finally:
+            self.question.accept()
+        
     def clicked_exit(self):
         self.question = QDialog()
         self.setWindowTitle("Salir")
