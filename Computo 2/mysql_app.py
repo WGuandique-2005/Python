@@ -5,7 +5,7 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget,
                             QLineEdit, QTextEdit, QLabel, QPushButton,
-                            QFormLayout)
+                            QFormLayout, QComboBox, QDialog, QRadioButton)
 import mysql.connector
 
 class myApp(QMainWindow):
@@ -27,11 +27,11 @@ class myApp(QMainWindow):
         layout = QFormLayout()
         
         lbl1 = QLabel("Ingrese los datos del producto:\n")
-        lbl_name = QLabel("Ingrese el nombre:")
+        self.lbl_name = QLabel("Ingrese el nombre:")
         self.txt_name = QLineEdit()
-        lbl_price = QLabel("Ingrese el precio: ")
+        self.lbl_price = QLabel("Ingrese el precio: ")
         self.txt_price = QLineEdit()
-        lbl_quantity = QLabel("Ingrese la cantidad:")
+        self.lbl_quantity = QLabel("Ingrese la cantidad:")
         self.txt_quantity = QLineEdit()
         self.btn_add = QPushButton("Agregar producto")
         self.btn_see = QPushButton("Ver productos")
@@ -39,16 +39,28 @@ class myApp(QMainWindow):
         self.btn_see.clicked.connect(self.clicked_see)
         self.view = QTextEdit()
         
+        self.btn_update = QPushButton("Actualizar producto")
+        self.btn_update.clicked.connect(self.clicked_update)
+        self.btn_delete = QPushButton("Eliminar producto")
+        self.btn_delete.clicked.connect(self.clicked_deleted)
+        self.btn_search = QPushButton("Buscar producto")
+        self.btn_search.clicked.connect(self.clicked_search)
+        self.btn_exit = QPushButton("Salir")
+        self.btn_exit.clicked.connect(exit)
+        
         layout.addRow(lbl1)
-        layout.addRow(lbl_name, self.txt_name)
-        layout.addRow(lbl_price, self.txt_price)
-        layout.addRow(lbl_quantity, self.txt_quantity)
+        layout.addRow(self.lbl_name, self.txt_name)
+        layout.addRow(self.lbl_price, self.txt_price)
+        layout.addRow(self.lbl_quantity, self.txt_quantity)
         layout.addRow(self.btn_add, self.btn_see)
         layout.addRow(self.view)
+        layout.addRow(self.btn_update, self.btn_delete)
+        layout.addRow(self.btn_search)
+        layout.addRow(self.btn_exit)
         
         center.setLayout(layout)
         self.setCentralWidget(center)
-    
+        
     def clicked_add(self):
         try:
             cursor = self.db.cursor()
@@ -77,6 +89,55 @@ class myApp(QMainWindow):
             texto += "---------\n"
         
         self.view.setText(texto)
+        
+    def clicked_update(self):
+        self.question = QDialog()
+        self.question.setWindowTitle("Actualizar datos")
+
+        self.lbl_id = QLabel("ID:")
+        self.txt_id = QLineEdit()
+        self.lbl_name = QLabel("Nombre:")
+        self.txt_name_update = QLineEdit()
+        self.lbl_price = QLabel("Precio:")
+        self.txt_price_update = QLineEdit()
+        self.lbl_quantity = QLabel("Cantidad:")
+        self.txt_quantity_update = QLineEdit()
+        btn_yes = QPushButton("Actualizar")
+        btn_yes.clicked.connect(self.exec_update)
+
+        layout = QFormLayout()
+        layout.addRow(self.lbl_id, self.txt_id)
+        layout.addRow(self.lbl_name, self.txt_name_update)
+        layout.addRow(self.lbl_price, self.txt_price_update)
+        layout.addRow(self.lbl_quantity, self.txt_quantity_update)
+        layout.addRow(btn_yes)
+
+        self.question.setLayout(layout)
+
+        if self.question.exec_() == QDialog.Accepted:
+            self.exec_update()
+
+    def exec_update(self):
+        try:
+            cursor = self.db.cursor()
+            id = int(self.txt_id.text())
+            name = self.txt_name_update.text()
+            price = float(self.txt_price_update.text())
+            quantity = int(self.txt_quantity_update.text())
+
+            cursor.execute(f"update producto set nombre = '{name}', precio = {price}, cantidad = {quantity} where id = {id};")
+            self.view.setText("Producto actualizado con éxito")
+            self.db.commit()
+            self.question.accept()
+        except:
+            self.view.setText("Error al actualizar producto")
+        
+    
+    def clicked_deleted(self):
+        pass
+    
+    def clicked_search(self):
+        pass
 
 app = QApplication(sys.argv)
 main = myApp()
