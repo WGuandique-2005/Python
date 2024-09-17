@@ -3,7 +3,7 @@
 """
 
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget,
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                             QLineEdit, QTextEdit, QLabel, QPushButton,
                             QFormLayout, QComboBox, QDialog, QRadioButton)
 import mysql.connector
@@ -46,7 +46,7 @@ class myApp(QMainWindow):
         self.btn_search = QPushButton("Buscar producto")
         self.btn_search.clicked.connect(self.clicked_search)
         self.btn_exit = QPushButton("Salir")
-        self.btn_exit.clicked.connect(exit)
+        self.btn_exit.clicked.connect(self.clicked_exit)
         
         layout.addRow(lbl1)
         layout.addRow(self.lbl_name, self.txt_name)
@@ -138,6 +138,27 @@ class myApp(QMainWindow):
     
     def clicked_search(self):
         pass
+    
+    def clicked_exit(self):
+        self.question = QDialog()
+        self.setWindowTitle("Salir")
+        
+        layout = QVBoxLayout()
+        label = QLabel("¿Está seguro de cerrar la aplicación?")
+        btn_yes = QRadioButton("Si")
+        btn_no = QRadioButton("No")
+        btn_no.setChecked(True)
+        
+        btn_yes.clicked.connect(lambda: self.close(exit()))
+        btn_no.clicked.connect(lambda: self.question.reject())
+        
+        layout.addWidget(label)
+        layout.addWidget(btn_yes)
+        layout.addWidget(btn_no)
+        
+        self.question.setLayout(layout)
+        if self.question.exec_() == QDialog.Accepted:
+            self.close()
 
 app = QApplication(sys.argv)
 main = myApp()
