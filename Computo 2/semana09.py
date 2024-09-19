@@ -9,6 +9,7 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.encoders import encode_base64
 
 server = "smtp.gmail.com"
 port = 587
@@ -23,11 +24,19 @@ try:
     conn.login(email,password)
     message = MIMEMultipart()
     message ["From"] = email
-    message["To"] = "alfredomedrano678@gmail.com"
+    message["To"] = "jimmyrivas568@gmail.com"
     message["Subject"] = "Ganas de joder"
     body = "XD"
-    message.attach(MIMEText(body))
-    conn.sendmail(email,email,message.as_string())
+    html ="""
+    <html>
+        <body>
+            <h1>Hola</h1>
+        </body>
+    </html>
+    """
+    message.attach(MIMEText(html, 'html'))
+    conn.sendmail(email,"jimmyrivas568@gmail.com",message.as_string())
+    
 except smtplib.SMTPResponseException as e:
     print(f"Hay un error: {e}")
 finally:
