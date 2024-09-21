@@ -93,7 +93,7 @@ class myApp(QMainWindow):
     def clicked_update(self):
         self.question = QDialog()
         self.question.setWindowTitle("Actualizar datos")
-
+        
         self.lbl_id = QLabel("ID:")
         self.txt_id = QLineEdit()
         self.lbl_name = QLabel("Nombre:")
