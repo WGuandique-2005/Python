@@ -1,20 +1,80 @@
-"""
-* Una aplicaion usando PyQt5 y mySQL
-"""
-
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                             QLineEdit, QTextEdit, QLabel, QPushButton,
                             QFormLayout, QComboBox, QDialog, QRadioButton,
                             QMessageBox)
+import bcrypt
 import mysql.connector
+import smtplib
 
-class myApp(QMainWindow):
+class MyLogin(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.setWindowTitle("Login")
+        self.setGeometry(100,100,350,150)
+        self.setContentsMargins(20,20,20,20)
+        
+        self.db = mysql.connector.connect(
+            user="root",
+            password="12345",
+            host="localhost",
+            database="mysql01"
+        )
+        
+        center = QWidget()
+        layout = QFormLayout()
+        
+        lbl = QLabel("Inicio de sesion")
+        lbl_un = QLabel("Ingrese su nombre de usuario:")
+        lbl_pw = QLabel("Contraseña: ")
+        
+        self.txt_un = QLineEdit()
+        self.txt_pw = QLineEdit()
+        self.txt_pw.setEchoMode(QLineEdit.Password)
+        self.btn = QPushButton("Iniciar")
+        self.btn.clicked.connect(self.clicked_btn)
+        
+        layout.addRow(lbl)
+        layout.addRow(lbl_un, self.txt_un)
+        layout.addRow(lbl_pw, self.txt_pw)
+        layout.addRow(self.btn)
+        center.setLayout(layout)
+        self.setCentralWidget(center)
+        
+    def clicked_btn(self):
+        user = self.txt_un.text()  # Obtener el texto del campo de usuario
+        pw = self.txt_pw.text()  # Obtener el texto del campo de contraseña
+        
+        if not user or not pw:
+            QMessageBox.warning(self, "Error", "Por favor ingrese su usuario y contraseña")
+        else:
+            cursor = self.db.cursor()
+            cursor.execute(f"select * from user where user_name ='{user}'")
+            result = cursor.fetchone()
+
+            if result:
+                username = result[1]
+                stored_pw = result[2].encode()  # No es necesario encodear la contraseña almacenada
+                pw_encoded = pw.encode()
+                if bcrypt.checkpw(pw_encoded, stored_pw):
+                    QMessageBox.information(self, "Sesión iniciada", "Bienvenido")
+                    self.hide()
+                    main_window = myApp(self, self)
+                    main_window.show()
+                else:
+                    QMessageBox.warning(self, "Error", "Contraseña incorrecta")
+            else:
+                QMessageBox.warning(self, "Error", "Usuario no encontrado")
+
+
+
+class myApp(QMainWindow):
+    def __init__(self, parent=None, login=None):
+        super().__init__(parent)
+        self.login = login
         
         self.setGeometry(100,100,450,380)
-        self.setWindowTitle("MySQL")
+        self.setWindowTitle("Administración de Productos")
         self.setContentsMargins(25,10,25,20)
         
         self.db = mysql.connector.connect(
@@ -46,7 +106,7 @@ class myApp(QMainWindow):
         self.btn_delete.clicked.connect(self.clicked_deleted)
         self.btn_search = QPushButton("Buscar producto")
         self.btn_search.clicked.connect(self.clicked_search)
-        self.btn_exit = QPushButton("Salir")
+        self.btn_exit = QPushButton("Cerrar sesión")
         self.btn_exit.clicked.connect(self.clicked_exit)
         
         layout.addRow(lbl1)
@@ -213,17 +273,18 @@ class myApp(QMainWindow):
         finally:
             self.question.accept()
         
+    
     def clicked_exit(self):
         self.question = QDialog()
-        self.setWindowTitle("Salir")
+        self.question.setWindowTitle("Cerrar sesión")
         
         layout = QVBoxLayout()
-        label = QLabel("¿Está seguro de cerrar la aplicación?")
+        label = QLabel("¿Está seguro de cerrar sesión?")
         btn_yes = QRadioButton("Si")
         btn_no = QRadioButton("No")
         btn_no.setChecked(True)
         
-        btn_yes.clicked.connect(lambda: self.close(exit()))
+        btn_yes.clicked.connect(self.exit_main)
         btn_no.clicked.connect(lambda: self.question.reject())
         
         layout.addWidget(label)
@@ -234,7 +295,15 @@ class myApp(QMainWindow):
         if self.question.exec_() == QDialog.Accepted:
             self.close()
 
+    def exit_main(self):
+        self.hide()
+        self.question.close()
+        self.login.txt_un.clear()
+        self.login.txt_pw.clear()
+        login.show()
+
+
 app = QApplication(sys.argv)
-main = myApp()
-main.show()
-app.exec()
+login = MyLogin()
+login.show()
+sys.exit(app.exec_())

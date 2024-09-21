@@ -18,7 +18,7 @@ import mysql.connector
 import smtplib
 
 
-class MyApp(QMainWindow):
+class MyLogin(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Login")
@@ -137,6 +137,6 @@ class RegisterWindow(QMainWindow):
             self.close()
 
 app = QApplication(sys.argv)
-main = MyApp()
+main = MyLogin()
 main.show()
 app.exec()
