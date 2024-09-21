@@ -302,7 +302,6 @@ class myApp(QMainWindow):
         self.login.txt_pw.clear()
         login.show()
 
-
 app = QApplication(sys.argv)
 login = MyLogin()
 login.show()
