@@ -45,7 +45,7 @@ class MyLogin(QMainWindow):
         self.btn = QPushButton("Iniciar")
         self.btn.clicked.connect(self.clicked_btn)
         
-        self.label = QLabel("¿Quieres crear una cuenta?")
+        self.label = QLabel("¿Crear una cuenta?")
         self.reg = QPushButton("Registrarse")
         self.reg.clicked.connect(self.clicked_reg)
         
