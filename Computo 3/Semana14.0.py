@@ -1,6 +1,7 @@
 # Semana 14 - Progrmacion Computacional III
 # Django Framework
 
+
 #todo\ Creacion del poyecto:
 #  django-admin startproject nombreproyecto .
 
